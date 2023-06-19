@@ -20,14 +20,12 @@ const scene = new THREE.Scene()
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
-const matcapTexture = textureLoader.load('/textures/matcaps/1.png')
+const matcapTexture = textureLoader.load('/textures/matcaps/5.png')
 
 const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 
 const donutGeometry = new THREE.TorusGeometry(0.2, 0.1, 16)
 const boxGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3)
-
-
 
 /**
  * Fonts
@@ -38,7 +36,7 @@ fontLoader.load(
     '/fonts/helvetiker_regular.typeface.json',
     (font) => {
         const textGeometry = new TextGeometry(
-            'Hello three.js!',
+            'I\'m Ilya Hancharuk',
             {
                 font: font,
                 size: 0.5,
@@ -114,9 +112,9 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 1
-camera.position.y = 1
-camera.position.z = 2
+camera.position.x = 1.5
+camera.position.y = 1.5
+camera.position.z = 3
 scene.add(camera)
 
 // Controls
