@@ -56,35 +56,35 @@ fontLoader.load(
         textGeometry.center()
         const text = new THREE.Mesh(textGeometry, material)
         scene.add(text)
+
+        for (let i = 0; i < 100; i++) {
+            const donut = new THREE.Mesh(donutGeometry, material)
+            donut.position.x = (Math.random() - 0.5) * 10
+            donut.position.y = (Math.random() - 0.5) * 10
+            donut.position.z = (Math.random() - 0.5) * 10
+            donut.rotation.x = Math.random() * Math.PI
+            donut.rotation.y = Math.random() * Math.PI
+            const scale = Math.random()
+            donut.scale.set(scale, scale, scale)
+            scene.add(donut)
+        }
+        for (let i = 0; i < 100; i++) {
+            const box = new THREE.Mesh(boxGeometry, material)
+            box.position.x = (Math.random() - 0.5) * 10
+            box.position.y = (Math.random() - 0.5) * 10
+            box.position.z = (Math.random() - 0.5) * 10
+            box.rotation.x = Math.random() * Math.PI
+            box.rotation.y = Math.random() * Math.PI
+            const scale = Math.random()
+            box.scale.set(scale, scale, scale)
+            scene.add(box)
+        }
     }
 )
 
 /**
  * Object
  */
-for (let i = 0; i < 100; i++) {
-    const donut = new THREE.Mesh(donutGeometry, material)
-    donut.position.x = (Math.random() - 0.5) * 10
-    donut.position.y = (Math.random() - 0.5) * 10
-    donut.position.z = (Math.random() - 0.5) * 10
-    donut.rotation.x = Math.random() * Math.PI
-    donut.rotation.y = Math.random() * Math.PI
-    const scale = Math.random()
-    donut.scale.set(scale, scale, scale)
-    scene.add(donut)
-}
-for (let i = 0; i < 100; i++) {
-    const box = new THREE.Mesh(boxGeometry, material)
-    box.position.x = (Math.random() - 0.5) * 10
-    box.position.y = (Math.random() - 0.5) * 10
-    box.position.z = (Math.random() - 0.5) * 10
-    box.rotation.x = Math.random() * Math.PI
-    box.rotation.y = Math.random() * Math.PI
-    const scale = Math.random()
-    box.scale.set(scale, scale, scale)
-    scene.add(box)
-}
-
 
 /**
  * Sizes
