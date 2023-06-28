@@ -29,6 +29,9 @@ const updateAllMaterials = () => {
         if (child.isMesh && child.material.isMeshStandardMaterial) {
 
             child.material.envMapIntensity = global.envMapIntensity
+
+            child.castShadow = true
+            child.receiveShadow = true
         }
     })
 }
@@ -50,7 +53,20 @@ gltfLoader.load(
 
         model = gltf.scene
         model.scale.set(10, 10, 10)
+        model.position.x = 4
         scene.add(model)
+
+        updateAllMaterials()
+    }
+)
+
+gltfLoader.load(
+    '/models/hamburger.glb',
+    (gltf) =>
+    {
+        gltf.scene.scale.set(0.4, 0.4, 0.4)
+        gltf.scene.position.set(-4, 2.5, 0)
+        scene.add(gltf.scene)
 
         updateAllMaterials()
     }
@@ -70,16 +86,16 @@ gui
 
 
 // LDR cube texture
-// const environmentMap = cubeTextureLoader.load([
-//     '/environmentMaps/0/px.png',
-//     '/environmentMaps/0/nx.png',
-//     '/environmentMaps/0/py.png',
-//     '/environmentMaps/0/ny.png',
-//     '/environmentMaps/0/pz.png',
-//     '/environmentMaps/0/nz.png'
-// ])
-// scene.environment = environmentMap
-// scene.background = environmentMap
+const environmentMap = cubeTextureLoader.load([
+    '/environmentMaps/0/px.png',
+    '/environmentMaps/0/nx.png',
+    '/environmentMaps/0/py.png',
+    '/environmentMaps/0/ny.png',
+    '/environmentMaps/0/pz.png',
+    '/environmentMaps/0/nz.png'
+])
+scene.environment = environmentMap
+scene.background = environmentMap
 scene.backgroundBlurriness = 0
 scene.backgroundIntensity = 1
 gui
@@ -142,47 +158,90 @@ gui
  * Real time environment map
  */
 
-// Base environment map
-const environmentMap = textureLoader.load('/environmentMaps/blockadesLabsSkybox/interior_views_cozy_wood_cabin_with_cauldron_and_p.jpg')
-environmentMap.mapping = THREE.EquirectangularReflectionMapping
-environmentMap.colorSpace = THREE.SRGBColorSpace
+// // Base environment map
+// const environmentMap = textureLoader.load('/environmentMaps/blockadesLabsSkybox/interior_views_cozy_wood_cabin_with_cauldron_and_p.jpg')
+// environmentMap.mapping = THREE.EquirectangularReflectionMapping
+// environmentMap.colorSpace = THREE.SRGBColorSpace
 
-scene.background = environmentMap
+// scene.background = environmentMap
 
-// Holy donut
-const holyDonut = new THREE.Mesh(
-    new THREE.TorusGeometry(8, 0.5),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(10, 4, 2) })
+// // Holy donut
+// const holyDonut = new THREE.Mesh(
+//     new THREE.TorusGeometry(8, 0.5),
+//     new THREE.MeshBasicMaterial({ color: new THREE.Color(10, 4, 2) })
+// )
+// holyDonut.layers.enable(1)
+// holyDonut.position.y = 3.5
+// scene.add(holyDonut)
+
+// // Cube render target
+// const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(
+//     256,
+//     {
+//         type: THREE.FloatType
+//     }
+// )
+// scene.environment = cubeRenderTarget.texture
+
+// // Cube camera
+// const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
+// cubeCamera.layers.set(1)
+
+/**
+ * Floor
+ */
+const floorColorTexture = textureLoader.load('/textures/wood_floor_deck_1k/wood_floor_deck_diff_1k.jpg')
+floorColorTexture.colorSpace = THREE.SRGBColorSpace
+const floorNormalTexture = textureLoader.load('/textures/wood_floor_deck_1k/wood_floor_deck_nor_gl_1k.png')
+const floorAORoughnessMetalnessTexture = textureLoader.load('/textures/wood_floor_deck_1k/wood_floor_deck_arm_1k.jpg')
+
+const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(16, 8),
+    new THREE.MeshStandardMaterial({
+        map: floorColorTexture,
+        normalMap: floorNormalTexture,
+        aoMap: floorAORoughnessMetalnessTexture,
+        roughnessMap: floorAORoughnessMetalnessTexture,
+        metalnessMap: floorAORoughnessMetalnessTexture,
+    })
 )
-holyDonut.layers.enable(1)
-holyDonut.position.y = 3.5
-scene.add(holyDonut)
+floor.rotation.x = - (Math.PI * 0.5)
+scene.add(floor)
 
-// Cube render target
-const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(
-    256,
-    {
-        type: THREE.FloatType
-    }
+
+/**
+ * Wall
+ */
+const wallColorTexture = textureLoader.load('/textures/rabdentse_ruins_wall_1k/rabdentse_ruins_wall_diff_1k.jpg')
+wallColorTexture.colorSpace = THREE.SRGBColorSpace
+const wallNormalTexture = textureLoader.load('/textures/rabdentse_ruins_wall_1k/rabdentse_ruins_wall_nor_gl_1k.png')
+const wallAORoughnessMetalnessTexture = textureLoader.load('/textures/rabdentse_ruins_wall_1k/rabdentse_ruins_wall_arm_1k.jpg')
+
+const wall = new THREE.Mesh(
+    new THREE.PlaneGeometry(16, 8),
+    new THREE.MeshStandardMaterial({
+        map: wallColorTexture,
+        normalMap: wallNormalTexture,
+        aoMap: wallAORoughnessMetalnessTexture,
+        roughnessMap: wallAORoughnessMetalnessTexture,
+        metalnessMap: wallAORoughnessMetalnessTexture,
+    })
 )
-scene.environment = cubeRenderTarget.texture
-
-// Cube camera
-const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
-cubeCamera.layers.set(1)
-
+wall.position.y = 4
+wall.position.z = - 4
+scene.add(wall)
 
 
 /**
  * Torus Knot
  */
-const torusKnot = new THREE.Mesh(
-    new THREE.TorusKnotGeometry(1, 0.4, 100, 16),
-    new THREE.MeshStandardMaterial({ roughness: 0, metalness: 1, color: 0xaaaaaa })
-)
-torusKnot.position.x = -4
-torusKnot.position.y = 4
-scene.add(torusKnot)
+// const torusKnot = new THREE.Mesh(
+//     new THREE.TorusKnotGeometry(1, 0.4, 100, 16),
+//     new THREE.MeshStandardMaterial({ roughness: 0, metalness: 1, color: 0xaaaaaa })
+// )
+// torusKnot.position.x = -4
+// torusKnot.position.y = 4
+// scene.add(torusKnot)
 
 /**
  * Sizes
@@ -225,26 +284,70 @@ controls.enableDamping = true
  */
 const ambientLight = new THREE.AmbientLight('#ffffff', 0.5)
 
-const directionalLight = new THREE.DirectionalLight('#ffffff', 0.6)
+const directionalLight = new THREE.DirectionalLight('#ffffff', 2)
 directionalLight.castShadow = true
-directionalLight.shadow.mapSize.set(1024, 1024)
-directionalLight.shadow.camera.far = 15
+directionalLight.shadow.mapSize.set(512, 512)
+directionalLight.shadow.camera.far = 20
 directionalLight.shadow.camera.left = - 7
 directionalLight.shadow.camera.top = 7
 directionalLight.shadow.camera.right = 7
 directionalLight.shadow.camera.bottom = - 7
-directionalLight.position.set(5, 5, 5)
-// scene.add(ambientLight, directionalLight)
+directionalLight.position.set(- 6, 9.75, 3.75)
+directionalLight.shadow.normalBias = 0.025
+directionalLight.shadow.bias = - 0.005
+scene.add(directionalLight)
 
+// Target
+directionalLight.target.position.set(0, 4, 0)
+directionalLight.target.updateWorldMatrix()
+
+gui.add(directionalLight, 'intensity').min(0).max(10).step(0.001).name('lightIntensity')
+gui.add(directionalLight.position, 'x').min(- 10).max(10).step(0.001).name('lightX')
+gui.add(directionalLight.position, 'y').min(- 10).max(10).step(0.001).name('lightY')
+gui.add(directionalLight.position, 'z').min(- 10).max(10).step(0.001).name('lightZ')
+gui.add(directionalLight, 'castShadow')
+gui.add(directionalLight.shadow, 'normalBias').min(- 0.05).max(0.05).step(0.001)
+gui.add(directionalLight.shadow, 'bias').min(- 0.05).max(0.05).step(0.001)
+
+// Helper
+// const directionalLightCameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
+// scene.add(directionalLightCameraHelper)
 
 /**
  * Renderer
  */
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
-})
+const pixelRatio = Math.min(window.devicePixelRatio, 2)
+const renderer = pixelRatio > 1
+    ? new THREE.WebGLRenderer({
+        canvas: canvas
+    })
+    : new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true
+    })
 renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.setPixelRatio(pixelRatio)
+
+// Tone mapping
+renderer.toneMapping = THREE.ReinhardToneMapping
+renderer.toneMappingExposure = 3
+gui.add(renderer, 'toneMapping', {
+    No: THREE.NoToneMapping,
+    Linear: THREE.LinearToneMapping,
+    Reinhard: THREE.ReinhardToneMapping,
+    Cineon: THREE.CineonToneMapping,
+    ACESFilmic: THREE.ACESFilmicToneMapping
+})
+gui.add(renderer, 'toneMappingExposure').min(0).max(10).step(0.001)
+
+// Physically accurate lighting
+renderer.useLegacyLights = false
+gui.add(renderer, 'useLegacyLights')
+
+// Shadows
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
+
 
 /**
  * Animate
@@ -255,11 +358,11 @@ const tick = () =>
     // Time
     const elapsedTime = clock.getElapsedTime()
 
-    if (holyDonut) {
-        holyDonut.rotation.x = Math.sin(elapsedTime) * 2
+    // if (holyDonut) {
+    //     holyDonut.rotation.x = Math.sin(elapsedTime) * 2
 
-        cubeCamera.update(renderer, scene)
-    }
+    //     cubeCamera.update(renderer, scene)
+    // }
 
     // Update controls
     controls.update()
